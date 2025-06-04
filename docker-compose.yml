@@ -1,0 +1,25 @@
+services:
+  mysql:
+    image: mysql:8.0.33
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_erp_login5
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
+
+  erp:
+    build: ERP_SpringBoot-master
+    ports:
+      - "8081:8081"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/db_erp_login5?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&jdbcCompliantTruncation=false
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql
+    restart: always
